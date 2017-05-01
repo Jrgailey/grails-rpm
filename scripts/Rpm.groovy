@@ -9,23 +9,38 @@ target(rpmMain: "Build the application RPM") {
 
     println "Complete"
 }
-
 def getRpmName() {
     def rpmName = argsMap.name
+    def buildNum = argsMap.build
+    def release = argsMap.release
+    def useDate = argsMap.useDate
+
     if (!rpmName) {
         String appName = metadata['app.name']
         String appVersion = metadata['app.version']
-        String appRelease = rpmRelease
-        rpmName = "$appName-$appVersion-$appRelease"
+        rpmName = "$appName-$appVersion"
+
+        if (release) {
+            String appRelease = rpmRelease
+            rpmName += "-$appRelease"
+        }
+        if (useDate == "true") {
+            System.out.println(useDate)
+            def appDate = new Date().format("yyyy.MM.dd")
+            rpmName += "-$appDate"
+        }
+        if (buildNum) {
+            rpmName += "-$buildNum"
+        }
     }
     rpmName
 }
 
 def getRpmRelease() {
-    String appRelease = new Date().format("yyyy.MM.dd")
+    String appRelease = ""
     String appBuildNumber = argsMap.release
     if (appBuildNumber) {
-        appRelease += "_" + appBuildNumber
+        appRelease = appBuildNumber
     }
     appRelease
 }

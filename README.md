@@ -2,6 +2,7 @@ grails-rpm
 ==========
 
 Create a configurable rpm from your grails artifacts.
+This a fork from the [wotifgroup grails-rpm repo](https://github.com/wotifgroup/grails-rpm).
 
 ## Quick start
 Here's a sample rpm configuration that you can drop into BuildConfig.groovy:
@@ -91,7 +92,7 @@ wish to build. The rpm property is broken into the following sections:
 ### metaData
 The metaData section is a map, allowing you to set any of the bean properties on [redline's Builder class](http://redline-rpm.org/apidocs/org/freecompany/redline/Builder.html).
 
-type is one of the enum values from [redline's RpmType](http://redline-rpm.org/apidocs/org/freecompany/redline/header/RpmType.html).
+type is one of the enum values from [redline's RpmType](http://redline-rpm.org/usage.html).
 
 ### Pre/Post Scripts
 You can specify shell scripts inside your grails project to run on post-install or pre-uninstall of the rpm:
@@ -105,7 +106,7 @@ packageInfo is a double which lets you specify the name and version of the insta
 
 ### platform
 platform lets you specify the intended architecture and OS for your rpm. The values here should be one of enum values from redline's [Architecture](http://redline-rpm.org/apidocs/org/freecompany/redline/header/Architecture.html)
-or [Os](http://redline-rpm.org/apidocs/org/freecompany/redline/header/Os.html)
+or [Os](http://redline-rpm.org/usage.html)
 
 ### dependencies
 dependencies is map of the installed packages (and their versions) that your rpm depends on.
@@ -127,13 +128,44 @@ Each node may also specify a set of symlinks to install at that directory, via t
 the permissions for that symlink
 
 ## Command-Line Arguments
-By default, the rpm will be named with the following form: appName-appVersion-date.noarch.rpm. You can optionally add a release
-to the end of the name, which can be useful for CI servers to add their build number to:
-```
-grails rpm --release=123
-```
-would produce an rpm something like "testapp-1.0-2013.01.01_123.noarch.rpm".
+By default, the rpm will be named with the following form: appName-appVersion.noarch.rpm. 
 
+###Commands:
+The file generated will contain the following order of information:
+`appName-appVersion-appRelease-appDate-appBuildNumber`
+
+Example: `myApp-1.2.3-hotfix-2017.05.01-1`
+```
+grails rpm
+grails rpm --release=XXX
+grails rpm --build=777
+grails rpm --useDate=true
+
+```
+
+#### release (appRelease)
+Adds a custom release value to the end of the rpm name.
+```
+grails rpm --release=abc
+```
+would produce an rpm something like "testapp-1.0.0-abc.noarch.rpm".
+
+#### useDate (appDate)
+Flag used to determine if the date should be added to the generated filename. By default the date is omitted, unless you
+ pass in `true`.
+```
+grails rpm --useDate=true
+grails rpm --useDate=false
+```
+would produce an rpm something like "testapp-1.0.0-2017.05.01.noarch.rpm".
+
+#### build (appBuildNumber)
+```
+grails rpm --build=999
+```
+would produce an rpm something like "testapp-1.0.0-999.noarch.rpm".
+
+#### name (appName)
 Furthermore, you can completely override the name of the rpm like this:
 ```
 grails rpm --name=hello
